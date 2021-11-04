@@ -1,0 +1,158 @@
+---
+title: "Problemas de Aproximación a las soluciones de sistemas de ecuaciones no lineales."
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+\newcommand{\w}{\hat{y}}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+```{r,echo=F}
+AA=matrix(c(10,5,0,0,6,5,10,-4,0,25,0,-4,8,-1,-11,0,0,-1,5,-11),nrow=4,byrow=T)
+```
+
+
+(@) El sistema no lineal:
+$$
+\left.
+\begin{array}{ll}
+x_1^2-10 x_1+x_2^2+8 & = 0,\\
+x_1 x_2^2+x_1-10x_2+8 & =  0,
+\end{array}
+\right\}
+$$
+se puede transformar en un problema de punto fijo:
+$$
+\left.
+\begin{array}{ll}
+x_1 = & g_1(x_1,x_2)=\frac{x_1^2+x_2^2+8}{10},\\[0.15cm]
+x_2= & g_2(x_1,x_2)=\frac{x_1 x_2^2+x_1+8}{10}.
+\end{array}
+\right\}
+$$
+    a) Demostrar que la función $\m{G}=(g_1,g_2)^\top$ tiene un único punto fijo en el dominio:
+    $$
+    \m{D}=\{(x_1,x_2)^\top\ |\ 0\leq x_1,x_2\leq 1.5\}.
+    $$
+    a) Aplicar la iteración del método del punto fijo para aproximar la solución aproximada del sistema no lineal con una tolerancia de $10^{-5}$ en la norma $\|\cdot \|_2$.
+    a) ¿Mejora la convergencia aplicar la aceleración de Gauss-Seidel?
+
+(@) Demostrar que las funciones $\m{G}:\m{D}\subset\mathbb{R}^3\longrightarrow\mathbb{R}^3$ tiene un único punto fijo en el dominio correspondiente $\m{D}$. Aplicar la iteración del punto fijo para hallar dicho punto fijo con una tolerancia de $10^{-5}$ en la norma $\|\cdot \|_2$.
+    a) $$\m{G}(x_1,x_2,x_3)=\left(\frac{\cos(x_2 x_3)+0.5}{3},\frac{1}{25}\sqrt{x_1^2+0.3125}-0.03,-\frac{1}{20}\mathrm{e}^{-x_1x_2}-\frac{10\pi -3}{6}\right)^\top,$$ en el dominio $$\m{D}=\{(x_1,x_2,x_3)^\top,\ |\ -1\leq x_i\leq 1,\ i=1,2,3\}.$$
+    a) $$\m{G}(x_1,x_2,x_3)=\left(\frac{1}{3}\cos(x_2x_3)+\frac{1}{6},-\frac{1}{9}\sqrt{x_1^2+\sin (x_3)+1.06}-0.1,-\frac{1}{20}\mathrm{e}^{-x_1x_2}-\frac{10\pi -3}{6}\right)^\top,$$ en el dominio $$\m{D}=\{(x_1,x_2,x_3)^\top,\ |\ -1\leq x_i\leq 1,\ i=1,2,3\}.$$
+
+(@) Usar el método de Newton-Raphson con $\s{x}{0}=\m{0}$ para calcular una aproximación de los sistemas siguientes no lineales con una tolerancia de $10^{-6}$ usando la norma $\|\cdot\|_2$:
+    a) $$
+    \left.
+    \begin{array}{ll}
+    \sin(4\pi x_1 x_2)-2x_2-x_1 & =0,\\[0.1cm]
+    \left(\frac{4\pi-1}{4\pi}\right)\left(\mathrm{e}^{2x_1}-\mathrm{e}\right)+4\mathrm{e}x_2^2-2\mathrm{e}x_1 & = 0.
+    \end{array}
+    \right\}
+    $$
+    a) $$
+    \left.
+    \begin{array}{ll}
+    5x_1^2-x_2^2 & =0,\\
+    x_2-0.25 (\sin(x_1)+\cos(x_2)) & = 0.
+    \end{array}
+    \right\}
+    $$
+    a) $$
+    \left.
+    \begin{array}{ll}
+    10x_1-2x_2^2+x_2-2x_3-5 & =0,\\
+    8x_2^2+4x_3^2-9 & = 0,\\
+    8x_2x_3+4 & =0.
+    \end{array}
+    \right\}
+    $$
+
+(@) El siguiente sistema no lineal:
+$$
+    \left.
+    \begin{array}{ll}
+   3 x_1-\cos(x_2 x_3)-\frac{1}{2} & =0,\\[0.1cm]
+   x_1^2-625 x_2^2-\frac{1}{4} & =0,\\[0.1cm]
+   \mathrm{e}^{-x_1x_2}+20x_3+\frac{10\pi-3}{3}& =0,
+    \end{array}
+    \right\}
+    $$
+    tiene una matriz jacobiana singular en la solución. Es decir, el determinante de la matriz jacobiana en la solución vale $0$. Aplicar el método de Newton-Raphson con $\s{x}{0}=(1,1,-1)^\top$ para hallar una solución aproximada con una tolerancia de $10^{-5}$. Observar la lentitud de la convergencia.
+    
+    
+(@) Usar el método del gradiente descendente con una tolerancia de $0.05$ usando la norma $\|\cdot\|_2$ para hallar una aproximación de los sistemas no lineales siguientes:
+    a) $$
+    \left.
+    \begin{array}{ll}
+    3x_1^2-x_2^2 & =0,\\
+    3x_1x_2^2-x_1^3-1 & =0.
+    \end{array}
+    \right\}
+    $$
+    a) $$
+    \left.
+    \begin{array}{ll}
+    \sin(4\pi x_1 x_2)-2x_2-x_1 & =0,\\[0.1cm]
+    \left(\frac{4\pi-1}{4\pi}\right)\left(\mathrm{e}^{2x_1}-\mathrm{e}\right)+4\mathrm{e}x_2^2-2\mathrm{e}x_1 & = 0.
+    \end{array}
+    \right\}
+    $$
+    
+    
+(@) Usar el método del gradiente descendente con una tolerancia de $0.005$ usando la norma $\|\cdot\|_2$ para hallar el mínimo de las funciones siguientes:
+    a) $g(x_1,x_2)=\cos(x_1+x_2)+\sin(x_1)+\cos(x_2)$.
+    a) $g(x_1,x_2,x_3)=x_1^2+2x_2^2+x_3^2-2x_1x_2+2x_1-2.5x_2-x_3+2$.
+    

@@ -1,0 +1,78 @@
+---
+title: "Tarea de generalización de la expresión de Adams Moulton."
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+header-includes: \usepackage{tcolorbox,enumerate,hyperref}
+                 \newtcolorbox{myquote}{colback=gray!8!white, colframe=red!75!black}
+                 \renewenvironment{quote}{\begin{myquote}}{\end{myquote}}
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+
+```{r,echo=F}
+A=matrix(c(1,-1,0,-2,4,-2,0,-1,2),3,3,byrow=T)
+x0=c(-1,2,1)
+A2=matrix(c(4,1,1,1,1,3,-1,1,1,-1,2,0,1,1,0,2),4,4)
+x02=c(1,-2,0,3)
+```
+
+(@) Demostrar que la expresión $\nabla^k f(t_{i+1},y(t_{i+1}))=\nabla^k f(t_{i+1},y_{i+1})$ que aparece en la expresión del método multipaso implícito de los métodos de Adams-Moulton se puede escribir de la forma siguiente:
+$$
+\nabla^k f(t_{i+1},y_{i+1})=\sum_{j=0}^k (-1)^j \binom{k}{j} f(t_{i+1-j},y_{i+1-j}),
+$$
+y realizar un programa en `Python` que implemente el método de Adams-Moulton de orden $m$ con $m$ arbitrario.
+
+

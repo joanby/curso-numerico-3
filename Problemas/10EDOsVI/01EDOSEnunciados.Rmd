@@ -1,0 +1,126 @@
+---
+title: "Problemas de problemas de valores iniciales para resolver EDOS. Problemas bien planteados, método de Euler y métodos de Taylor."
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+\newcommand{\w}{\hat{y}}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+```{r,echo=F}
+AA=matrix(c(10,5,0,0,6,5,10,-4,0,25,0,-4,8,-1,-11,0,0,-1,5,-11),nrow=4,byrow=T)
+```
+
+
+(@) Demostrar que los siguientes problemas de valores iniciales tienen solución única y hallar dicha solución:
+    a) $y'=\frac{2}{t}y+t^2\mathrm{e}^t,\ 1\leq t\leq 2,\ y(1)=0$.
+    a) $y'=\frac{4t^3 y}{1+t^4}, \ 0\leq t\leq 1,\ y(0)=1$.
+  
+(@) Para las funciones siguientes, decir si verifican la condición de Lipschitz respecto la variable $y$ en el dominio $\m{D}=\{(t,y)\ 0\leq t\leq 1,\ -\infty <y <\infty\}$ y decir si el problema de valores iniciales $y'=f(t,y)\ 0\leq t\leq 1,\ y(0)=1$ es un problema bien planteado.
+    a) $f(t,y)=\mathrm{e}^{t-y}$.
+    a) $f(t,y)=\frac{1+y}{1+t}$.
+    
+(@) El método de Picard para resolver un problema de valores iniciales:
+$$
+y'=f(t,y)\ a\leq t\leq b,\ y(a)=y_0,
+$$
+consiste en lo siguiente: 
+    * Sea $y_0(t)=y_0$ para $t\in [a,b]$.
+    * A continuación definimos la secuencia de funciones $(y_k(t))_{k\geq 0}$ de la forma siguiente:
+    $$
+    y_k(t)=y_0+\int_a^t f(\tau,y_{k-1}(\tau))\,d\tau,\quad k=1,2,\ldots
+    $$
+    a) Integrar $y'=f(t,y(t))$ y usar la condición inicial para deducir el método de Picard.
+    a) Generar $y_0(t),\ y_1(t),\ y_2(t)$, y $y_3(t)$ para el problema de valores inicial:
+    $$
+    y'=-y+t+1,\ 0\leq t\leq 1,\ y(0)=1.
+    $$
+    a) Comparar los resultados obtenidos en la parte b) con la serie de MacLaurin de la solución exacta $y(t)=t+\mathrm{e}^{-t}$.
+
+(@) Usar el método de Euler para aproximar las soluciones de los problemas siguientes de valores iniciales y comparar los resultados obtenidos con la solución exacta.
+    a) $y'=\frac{1}{t^2}(\sin(2t)-\sin(2ty)),\ 1\leq t\leq 2, \ y(1)=2,\ h=0.25$. Solución exacta: $y(t)=\frac{1}{2t^2}(4+\cos 2-\cos(2t))$.
+    a) $y'=-(y+1)(y+3),\ 0\leq t\leq 2,\ y(0)=-2,\ h=0.2$. Solución exacta: $y(t)=-3+\frac{2}{1+\mathrm{e}^{-2t}}$.
+    
+(@) Considerar el siguiente problema de valores iniciales:
+$$
+y'=-10y,\ 0\leq t\leq 2,\ y(0)=1,
+$$
+con solución exacta $y(t)=\mathrm{e}^{-10 t}$. ¿Qué ocurre si aplicamos el método de Euler a este problema con $h=0.1$? ¿Violan estos resultados el Teorema que nos da una cota del error cometido $|\w(t_i)-y(t_i)|$ siendo $\w(t_i)$ la aproximación por el método de Euler? 
+
+\newpage
+(@) En el libro *Looking at History Through Mathematics*, Rashevsky considera un modelo para un problema relacionado con la producción de inconformistas en la sociedad. Supongamos que una sociedad tiene una población $x(t)$ individuos en el tiempo $t$, en años, y todos los inconformistas que se aparean con otros inconformistas tienen descendencia que resulta inconformista mientras que una proporción fija $r$ de otro tipo de descendencia es también inconformista. Sean $b$ y $d$ las tasas de nacimiento y muerte de la sociedad, respectivamente. 
+Entonces si los conformistas y los inconformistas se aparean de forma aleatoria, podemos modelar el problema de hallar $x(t)$ (individuos en total de la sociedad en el año $t$) y $x_i(t)$ (individuos inconformistas de la sociedad en el año $t$) por las ecuaciones:
+$$
+\frac{dx(t)}{dt}=(b-d)x(t),\quad \frac{dx_i(t)}{dt}=(b-d)x_i(t)+rb(x(t)-x_i(t)).
+$$
+    a) Sea $p(t)=\frac{x_i(t)}{x(t)}$ la proporción de inconformistas en el año $t$. Demostrar que la función $p(t)$ verifica la ecuación diferencial siguiente:
+    $$
+    \frac{p(t)}{dt}=rb(1-p(t)).
+    $$
+    a) Suponiendo que $p(0)=0.01$, $b=0.02$, $d=0.015$ y $r=0.1$, aproximar la solución $p(t)$ desde $t=0$ hasta $t=50$ usando un paso $h=1$ año usando el método de Euler.
+    a) Resolver la ecuación diferencial para $p(t)$ de forma exacta y comparar el resultado obtenido con el resultado obtenido en el apartado b) para $t=50$ años.
+    
+(@) Usar el método de Taylor de orden dos y orden $4$ para aproximar el siguiente problema de valores iniciales:
+$$y'=\frac{1}{t^2}(\sin(2t)-\sin(2ty)),\ 1\leq t\leq 2, \ y(1)=2,\ h=0.25,$$ 
+con solución exacta: $y(t)=\frac{1}{2t^2}(4+\cos 2-\cos(2t))$.
+
+(@) Un depósito grande de `r 3.785*1000` litros de agua contiene `r 453.6*50` gramos de sal disuelta. Supongamos que una concentración de sal en agua de `r round(453.6*0.02/3.785,2)` gramos de sal por litro entra en el depósito a una velocidad de `r round(5*3.785,2)` litros por minuto. 
+Supongamos también que hay un agujero en el fondo del depósito y sale líquido a una velocidad de `r round(3*3.785,2)` litros por minuto.\newline
+Sea $x(t)$ la cantidad en gramos de sal en el depósito en el tiempo $t$, donde $x(0)=`r 453.6*50`$ gramos. La ecuación diferencial que nos da la tasa de cambio $x'(t)$ de sal medida en gramos por minuto vale:
+$$
+x'(t)=5\cdot `r round(453.6*0.02/3.785,2)`-\frac{`r round(3*3.785,2)`x(t)}{`r 3.785*1000`+(`r round(5*3.785,2)`-`r round(3*3.785,2)`)t}=`r 5*round(453.6*0.02/3.785,2)`-\frac{`r round(3*3.785,2)`x(t)}{`r 3.785*1000`+`r round(5*3.785,2)-round(3*3.785,2)`t}.
+$$
+    a) Halla el minuto en el que el depósito tiene `r round(1010*3.785,2)` litros de concentración de sal y agua.
+    a) Usando el método de Taylor de orden 2 con $h=0.5$ calcula la concentración de sal cuando el depósito tiene `r round(1010*3.785,2)` litros de concentración de sal y agua.

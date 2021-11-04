@@ -1,0 +1,119 @@
+---
+title: "Problemas de problemas de valores iniciales para resolver EDOS. Métodos de Runge-Kutta y control de paso"
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+\newcommand{\w}{\hat{y}}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+```{r,echo=F}
+AA=matrix(c(10,5,0,0,6,5,10,-4,0,25,0,-4,8,-1,-11,0,0,-1,5,-11),nrow=4,byrow=T)
+```
+
+
+(@) Usar el método de Euler modificado para aproximar las soluciones de los siguientes problemas de valores iniciales y comparar los resultados con la solución exacta:
+    a) $y'=1+(t-y)^2,\ 2\leq t\leq 3,\ y(2)=1,\ h=0.5$, con solución exacta $y(t)=t+\frac{1}{1-t}$.
+    a) $y'=1+\frac{y}{t}+\left(\frac{y}{t}\right)^2,\ 1\leq t\leq 3,\ y(1)=0,\ h=0.2$, con solución exacta $y(t)=t\tan(\ln(t))$.
+    
+(@) Realizar el ejercicio anterior pero usar el método de Runge-Kutta 4 en lugar del método de Euler modificado.
+
+(@) Consideremos un depósito en forma de cono donde se ha recortado la parte del vértice (ver el gráfico adjunto donde se muestra una vista frontal de dicho depósito). Supongamos que el agua va fluyendo por el orificio circular de radio $r$ que tiene el cono recortado en la base. 
+\newline
+Sea $x(t)$ la altura del nivel del agua en el tiempo $t$ y $A(x)$ el área de la sección transversal a dicha altura. Supongamos que la velocidad con que el agua va cayendo es la siguiente:
+$$
+\frac{dx}{dt}=-`r round(0.6*0.3048,2)`\pi r^2\sqrt{2g}\frac{\sqrt{x}}{A(x)}.
+$$
+Supongamos que $r=`r round(0.1*0.3048,2)`$ metros, $g=9.8$ m/s${}^2$ y el depósito tiene un nivel inicial de agua de `r round(8*0.3048,2)` metros y un volumen inicial de $`r round(512/3*0.3048^3,2)`\pi$ m${}^3$.
+\newline
+Usar el método de Runge-Kutta 4 para calcular
+    a) el nivel del agua al cabo de 10 minutos con $h=20$ s.
+    a) cuando el depósito estará vacío, con un error de 1 minuto.
+    
+```{r, fig.align='center',echo=FALSE, label=urna43,out.width = "950px"}
+knitr::include_graphics("DepositoCircular.png",dpi=400)
+```
+
+\newpage
+(@) El método de Heun para resolver un problema de valor inicial $y'=f(t,y),\ a\leq t\leq b,\ y(a)=y_0$, consiste en hallar las aproximaciones $\w_i=\w(t_i)$, en el mallado $t_i=a+hi$, $h=\frac{b-a}{n}$, siendo $n$ el número de puntos del mallado, que verifican la recurrencia siguiente:
+$$
+\w_{i+1}=\w_i +\frac{h}{4}\left(f(t_i,\w_i)+3\left(f\left(t_i+\frac{2h}{3},\w_i+\frac{2h}{3}f\left(t_i+\frac{h}{3},\w_i+\frac{h}{3}f(t_i,\w_i)\right)\right)\right)\right), \ \w_0 =y_0, i=0,1,\ldots,n-1.
+$$
+    a) Demostrar que dicho método se puede expresar de la forma siguiente similar a la expresión del método de Runge-Kutta 4:
+\begin{align*}
+\w_0 = & y_0,\\
+k_1 = & f(t_i,\w_i),\\
+k_2 = & f\left(t_i+\frac{h}{3},\w_i+\frac{1}{3}k_1\right),\\
+k_3 = & f\left(t_i+\frac{2h}{3},\w_i +\frac{2}{3}k_2\right),\\
+\w_{i+1} = & \w_i +\frac{h}{4}(k_1+3k_3),\ i=0,1,\ldots,n-1.
+\end{align*}
+    a) Hallar el orden de consistencia de dicho método.
+    
+(@) Usar el método de Runge-Kutta-Fehlberg con control de paso con una toleracia de $0.000001$, un paso máximo de $0.5$ y un paso mínimo de $0.05$ para hallar una aproximación de la solución de los siguientes problemas de valores iniciales y comparar con la solución exacta:
+    a) $y'=(t+2t^3)y^3-ty,\ 0\leq t\leq 2,\ y(0)=\frac{1}{3}$, con solución exacta: $y(t)=\frac{1}{\sqrt{6\mathrm{e}^{t^2}+2t^2+3}}$.
+    a) $y'=-y+t\sqrt{y},\ 2\leq t\leq 4,\ y(2)=2$, con solución exacta: $y(t)=\left(\sqrt{2}\cdot \mathrm{e}\cdot\mathrm{e}^{-\frac{t}{2}}+t-2\right)^2$.
+    
+(@) En la teoría del contagio de una determinada enfermedad contagiosa, una relativa ecuación diferencial elemental se puede usar para predecir el número de individuos infectados en una población en cualquier valor del tiempo $t$, suponiendo unas cuantas simplificaciones. \newline
+Supongamos que todos los individuos de la población tienen la misma probabilidad de ser infectados y una vez infectados, permanecen en este estado. \newline
+Sea $x(t)$ el número de individuos susceptibles de ser infectados en el tiempo $t$ y $y(t)$ el número de inidividuos infectados. Es razonable suponer que la tasa a la que el número de infectados va cambiando es proporcional al producto de $x(t)$ e $y(t)$ debido a que dicha tasa depende de ambos valores $x(t)$ e $y(t)$ en el tiempo $t$. Si la población es suficientemente grande, posemos suponer que $x(t)$ e $y(t)$ son funciones continuas respecte a $t$ y el problema puede expresarse como: 
+$$
+y'(t)=kx(t)y(t),
+$$
+siendo $k$ una constante y $x(t)+y(t)=M$, siendo $M$ la población total. Entonces la ecuación anterior puede expresarse sólo en función de $y(t)$:
+$$
+y'(t)=k(M-y(t))y(t).
+$$
+    a) Suponiendo que $M=100000$, $y(0)=1000$ y $k=0.000002=2\cdot 10^{-6}$, y el tiempo se mide en días, hallar aproximadamente el número de infectados al cabo de $30$ días usando el método de Runge-Kutta-Fehlberg.
+    a) La ecuación diferencial anterior se denomina *ecuación de Bernoulli* y se puede transformar en una ecuación diferencial lineal usando el cambio de variables $u(t)=\frac{1}{y(t)}$. Usar dicha técnica para hallar la solución exacta y comparar el valor de $y(30)$ con el valor obtenido en el apartado a). ¿Cuánto vale el límite $\displaystyle\lim_{t\to\infty}y(t)$? El valor obtenido, ¿coincide con el valor que intuitivamente debe salir?

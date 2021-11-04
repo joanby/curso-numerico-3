@@ -1,0 +1,82 @@
+---
+title: "Problemas de Aproximación de funciones. Interpolación trigonométrica. Transformada rápida de Fourier."
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+\newcommand{\w}{\hat{y}}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+```{r,echo=F}
+AA=matrix(c(10,5,0,0,6,5,10,-4,0,25,0,-4,8,-1,-11,0,0,-1,5,-11),nrow=4,byrow=T)
+```
+
+
+(@) Calcula la aproximación trigonométrica continua por el método de mínimos cuadrados $S_n(x)$ para las funciones siguientes en el intervalo $[-\pi,\pi]$. Hallar los errores cometidos.
+    a) $f(x)=x$.
+    a) $f(x)=\mathrm{e}^x$.
+    a) $f(x)=\begin{cases}-1, & \mbox{ si } -\pi <x\leq 0,\\ 1,& \mbox{ si } 0 <x\leq \pi.\end{cases}$
+
+(@) Calcula la aproximación trigonométrica discreta por el método de mínimos cuadrados $S_n(x)$ para las funciones siguientes en el intervalo $[-\pi,\pi]$. Hallar los errores cometidos.
+    a) $f(x)=\cos(3x)$, usando $n=2$, es decir, hallar $S_2(x)$ con $m=4$, es decir, usando $2m=8$ puntos de la forma $x_j=-\pi +\frac{j\pi}{4}$, $j=0,1,\ldots,7$.
+    a) $f(x)=x^2\cos(x)$, usando $n=3$, es decir, hallar $S_3(x)$ con $m=6$, es decir, usando $2m=12$ puntos de la forma $x_j=-\pi +\frac{j\pi}{6}$, $j=0,1,\ldots,11$.
+
+(@) Calcular el polinomio de interpolación trigonométrico de grado $4$ de las funciones siguientes en el intervalo $[-\pi,\pi]$ usando la transformada rápida de Fourier.
+    a) $f(x)=x(\pi -x)$.
+    a) $f(x)=|x|$.
+    a) $f(x)=x\cos(x^2)+\mathrm{e}^x\cos\left(\mathrm{e}^x\right)$.
+
+(@) Calcular el polinomio de interpolación trigonométrico de grado $16$ de la función $f(x)=x^2\cos(x)$ en el intervalo $[-\pi,\pi]$ usando la transformada rápida de Fourier.
+    

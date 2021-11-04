@@ -1,0 +1,102 @@
+---
+title: "Problemas de problemas de valores iniciales para resolver EDOS. Métodos multipaso, sistemas y ecuaciones diferenciales de órden superior."
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+\newcommand{\w}{\hat{y}}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+```{r,echo=F}
+AA=matrix(c(10,5,0,0,6,5,10,-4,0,25,0,-4,8,-1,-11,0,0,-1,5,-11),nrow=4,byrow=T)
+```
+
+
+(@) Usar los métodos de Adams-Bashford de órdenes 3 y 4 para aproximar la solución del problema siguiente de valores iniciales. Comparar los resultados con la solución exacta:
+$$y'=1+\frac{y}{t},\ 1\leq t\leq 2,\ y(1)=2,\ h=0.2,$$ con solución exacta $y(t)=t\ln (t)+2t.$
+Para hallar los valores iniciales necesarios usar la solución exacta.
+
+(@) Usar los métodos de Adams-Bashford de órdenes 3 y 4 para aproximar la solución del problema siguiente de valores iniciales. Comparar los resultados con la solución exacta:
+$$y'=1+\frac{y}{t}+\left(\frac{y}{t}\right)^2,\ 1\leq t\leq 3,\ y(1)=0,\ h=0.2,$$
+con solución exacta $y(t)=t\tan(\ln(t))$.
+Para hallar los valores iniciales necesarios usar el método de Runge-Kutta 4.
+
+(@) Repetir los ejercicios anteriores pero en lugar de usar los métodos de Adams-Bashford de órdenes 3 y 4, usar los métodos de Adams-Moulton de órdenes 2 y 3.
+
+(@) La ecuación diferencial de Gompertz:
+$$
+N'(t)=\alpha N(t)\ln\left(\frac{K}{N(t)}\right),
+$$
+sirve para modelar el crecimiento de tumores donde $N(t)$ es el número de células tumorosas en el tiempo $t$. El número máximo de células soportadas es $K$ y $\alpha$ es un parámetro relacionado con la habilidad proliferativa de las células.\newline
+En un determinado tipo de cáncer, $\alpha =0.0439$, $K=12000$ y $t$ se mide en meses. En el tiempo inicial $t=0$, se detecta un tumor con $N(0)=4000$. Usar el método predictor-corrector de Adams-Bashsord y Adams-Moulton con $h=0.5$ para hallar el número de meses necesarios para que $N(t)=11000$, número letal para dicho tipo de cáncer.
+
+(@) Usar el método de Runge-Kutta 4 para sistemas para aproximar las soluciones de los siguientes sistemas de ecuaciones y ecuaciones diferenciales de orden superior y comparar los resultados obtenidos con las soluciones exactas:
+    a) \begin{align*}
+    u_1' = & u_2,\ u_1(0)=1,\\
+    u_2' = & -u_1-2\mathrm{e}^t +1,\ u_2(0)=0,\\
+    u_3' = & -u_1-\mathrm{e}^t+1,\ u_3(0)=1,
+    \end{align*}
+    $0\leq t\leq 2,\ h=0.5$ y solución exacta $u_1(t)=\cos t+\sin t-\mathrm{e}^t+1,\ u_2(t)=-\sin t+\cos t -\mathrm{e}^t$, $u_3(t)=-\sin t+\cos t$.
+    a) $t^2 y''+t y'-4y=-3t, \ 1\leq t\leq 3,\ y(1)=4,\ y'(1)=3,\ h=0.2$ con solución exacta $y(t)=2t^2+t+\frac{1}{t^2}$.
+    
+(@) El estudio de modelos matemáticos para predecir la dinámica de poblaciones de especies competitivas ha sido el origen en trabajos independientes publicados en el siglo XX por A. J. Lotka y V. Volterra.\newline
+Consideramos el problema de predecir la población de dos especies, una de ellas es depredadora, a la que llamaremos $x_2(t)$ y la otra es la presa, a la que llamaremos $x_1(t)$.\newline
+Supondremos que las presas tienen suficiente alimento y que su tasa de nacimientos en un tiempo $t$ es proporcional al número de presas en dicho tiempo $t$, es decir $k_1 x_1(t)$. La tasa de muertes de las presas depende del número de presas y del número de depredadores que hay en dicho tiempo $t$. Por simplicidad, supondremos que dicha tasa vale $k_2 x_1(t)x_2(t)$. \newline
+La tasa de nacimientos de los depredadores depende del alimento disponible en cada instante de tiempo $t$, $x_1(t)$ y del número de depredadores para su reproducción. Supondremos que dicha tasa vale por tanto $k_3 x_1(t)x_2(t)$. Supondremos que la tasa de muertes de los depredadores es simplemente proporcional a los depredadores que hay en el instante de tiempo $t$, es decir $k_4 x_2(t)$.\newline
+Como $x_1'(t)$ y $x_2'(t)$ representan las tasas de cambio en las poblaciones de las presas y depredadores, respectivamente, la cantidad de presas y depredadores $x_1(t)$ y $x_2(t)$, respectivamente, verifican el siguiente sistema de ecuaciones diferenciales:
+$$
+x_1'(t)=k_1 x_1(t)-k_2 x_1(t)x_2(t),\quad x_2'(t)=k_3 x_1(t)x_2(t)-k_4 x_2(t).
+$$
+Resolver el sistema diferencial anterior usando el método de Runge-Kutta 4 para $0\leq t\leq 4$ suponiendo que la población inicial de las presas es $1000$ y la de depredadores, $500$, y el valor de las constantes, $k_1=3$, $k_2=0.002$, $k_3=0.0006$ y $k_4=0.5$. Realizar un gráfico de las soluciones de dicho problema y describir el fenómeno representado. 

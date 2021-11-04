@@ -1,0 +1,99 @@
+---
+title: "Problemas de Aproximación de funciones. Aproximación por mínimos cuadrados. Aproximación polinomial. Polinomios ortogonales."
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+\newcommand{\w}{\hat{y}}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+```{r,echo=F}
+AA=matrix(c(10,5,0,0,6,5,10,-4,0,25,0,-4,8,-1,-11,0,0,-1,5,-11),nrow=4,byrow=T)
+```
+
+
+(@) Consideremos la siguiente tabla de datos:
+```{r,echo=FALSE}
+x=c(4,4.2,4.5,4.7,5.1,5.5,5.9,6.3,6.8,7.1)
+set.seed(2018)
+y=rnorm(10,120,1)+4*x-x^2+0.1*x^3
+tabla=rbind(x,y)
+tabla=as.data.frame(tabla)
+rownames(tabla)=c("$x_i$","$y_i$")
+colnames(tabla)=c()
+library(knitr)
+library(kableExtra)
+knitr::kable(tabla,escape=FALSE) 
+```
+Se pide: 
+  
+  a) Hallar la mejor recta que aproxima la tabla de puntos anterior por el método de mínimos cuadrados y calcular el error cometido.
+  a) Hallar la mejor parábola o el mejor polinomio de grado 2 que aproxima la tabla de puntos anterior por el método de mínimos cuadrados y calcular el error cometido.
+  a) Hallar la mejor cúbica o el mejor polinomio de grado 3 que aproxima la tabla de puntos anterior por el método de mínimos cuadrados y calcular el error cometido. 
+  a) Hallar la mejor aproximación de la forma $b\mathrm{e}^{ax}$ por el método de mínimos cuadrados y calcular el error cometido.
+  a) Hallar la mejor aproximación de la forma $bx^a$ por el método de mínimos cuadrados y calcular el error cometido.
+    
+
+
+(@) Hallar el polinomio lineal por mínimos cuadrados, es decir, de grado menor o igual que $1$, que aproxime la función $f(x)$ en el intervalo indicado. Calcular el error cometido $E$.
+    a) $f(x)=x^3$, intervalo $[0,2]$.
+    a) $f(x)=\cos(x)+\frac{1}{2}\sin(3x)$, intervalo $[0,\pi]$.
+    a) $f(x)=x\ln x$, intervalo $[1,3]$.
+
+(@) Repetir el ejercicio anterior pero ahora hallar la parábola por mínimos cuadrados, es decir el polinomio de grado menor o igual que $2$.
+
+(@) Usando el Teorema de construcción de Polinomios ortogonales, hallar los polinomios ortogonales mónicos  $L_0(x), L_1(x), L_2(x)$ y $L_3(x)$ respecto al peso $w(x)=\mathrm{e}^{-x}$ en el intervalo $(0,\infty)$. Dichos polinomios se denominan **Polinomos de Laguerre**.
+
+(@) Usando los polinomios de Laguerre introducidos en el ejercicio anterior hallar la aproximación por mínimos cuadrados de grados 1, 2 y 3 de la función $f(x)=\mathrm{e}^{-2x}$ en el intervalo $(0,\infty)$.

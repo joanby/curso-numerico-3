@@ -1,0 +1,111 @@
+---
+title: "Problemas de problemas de valores iniciales para resolver EDOS. Estabilidad y sistemas Stiff."
+author: ""
+date: ""
+output:
+  pdf_document: default
+              
+  html_document: default
+---
+
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\s}[2]{\mathbf{#1}^{(#2)}}
+\newcommand{\pe}[2]{#1^\top #2}
+\newcommand{\w}{\hat{y}}
+
+```{r,echo=FALSE}
+write_matex2 <- function(x) {
+  begin <- "\\begin{bmatrix}"
+  end <- "\\end{bmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+write_matex3 <- function(x) {
+  begin <- "\\begin{vmatrix}"
+  end <- "\\end{vmatrix}"
+  X <-
+    apply(x, 1, function(x) {
+      paste(
+        paste(x, collapse = "&"),
+        "\\\\"
+      )
+    })
+  paste(c(begin, X, end), collapse = "")
+}
+options(scipen=999)
+signe = function(x,texte){
+  y=ifelse(x>0 && x==1,paste("+",texte),ifelse(x>0,paste(paste0("+",x),texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+signe.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("+\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+
+signe0 = function(x,texte){
+  y=ifelse(x>0 && x==1,texte,ifelse(x>0,paste0(x,texte),ifelse(x<0 && x==-1,paste("-",texte),ifelse(x<0,paste(paste0("-",abs(x)),texte),""))))
+  return(y)
+}
+
+signe0.frac = function(num,denom,texte){
+  y=ifelse(num>0,paste(paste0("\\frac{",num,"}{",denom,"}"),texte),ifelse(num<0,paste(paste0("-\\frac{",abs(num),"}{",denom,"}"),texte),""))
+  return(y)
+}
+```
+
+```{r,echo=F}
+AA=matrix(c(10,5,0,0,6,5,10,-4,0,25,0,-4,8,-1,-11,0,0,-1,5,-11),nrow=4,byrow=T)
+```
+
+
+(@) Consideremos un problema de valores iniciales,
+$$
+y'=f(t,y),\ a\leq t\leq b,\ y(a)=y_0.
+$$
+    a) Demostrar que:
+    $$
+    y'(t_i)=\frac{-3y(t_i)+4y(t_{i+1})-y(t_{i+2})}{2h}+\frac{h^2}{3}y'''(\xi_i),
+    $$
+    donde $t_i$ es un mallado en el intervalo $[a,b]$ de paso $h$: $t_i=a+ih$, $h=\frac{b-a}{n}$, siendo $n$ el número de valores del mallado y $\xi_i\in (t_i,t_{i+2})$.
+    a) El apartado anterior nos sugiere el método siguiente multipaso:
+    $$
+    \w_{i+2}=4\w_{i+1}-3\w_i+2hf(t_i,\w_i),\ i=0,1,\ldots,n-2.
+    $$
+    Usar dicho método para resolver el siguiente problema de valores iniciales:
+    $$
+    y'=1-y,\ 0\leq t\leq 1,\ y(0)=0,
+    $$
+    con $h=0.1$. Considerar los siguientes valores iniciales $\w_0=0,\ \w_1=y(t_1)=1-\mathrm{e}^{-0.1}$.
+    a) Repetir el apartado anterior con $h=0.01$ y $\w_1 = 1-\mathrm{e}^{-0.01}$.
+    a) Analizar la consistencia, estabilidad y la convergencia del método.
+
+(@) Dado el siguiente método multipaso:
+$$
+\w_{i+1}=-\frac{3}{2}\w_i+3\w_{i-1}-\frac{1}{2}\w_{i-2}+3hf(t_i,\w_i),\ i=2,\ldots,n-1,
+$$
+con valores iniciales $\w_0,\ \w_1$ y $\w_2$.
+    a) Hallar el error local de truncamiento.
+    a) Estudiar la consistencia, estabilidad y convergencia.
+    
+(@) Resolver el siguiente problema de valores iniciales Stiff usando los métodos de Euler y Runge-Kutta 4 y comparar los resultados con la solución exacta:
+$$
+y'=15\left(y-\frac{1}{t^3}\right)-\frac{3}{t^4},\ 1\leq t\leq 3,\ y(1)=0,\ h=0.25,
+$$
+con solución exacta: $y(t)=-\mathrm{e}^{-15t}+\frac{1}{t^3}$.
+
+(@) Demostrar que si aplicamos el método de Runge-Kutta 4 a la ecuación diferencial $y'=\lambda y$, la recurrencia que resulta es la siguiente:
+$$
+\w_{i+1}=\left(1+h\lambda +\frac{1}{2}(h\lambda)^2+\frac{1}{6}(h\lambda)^3+\frac{1}{24}(h\lambda)^4\right)\w_i.
+$$
+
+(@) El método de Euler hacia atrás es el siguiente método implícito:
+$$
+\w_{i+1}=\w_i +h f(t_{i+1},\w_{i+1}),\ i=0,1,\ldots,n-1
+$$
+Demostrar que dicho método es A-estable.
