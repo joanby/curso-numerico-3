@@ -3,7 +3,7 @@
 ### Con Juan Gabriel Gomila, Arnau Mir y María Santos
 
 
-Materiales del curso de [Métodos Numéricos con Python - Parte 3 Problemas no lineales, EDOs y EDPs](https://www.udemy.com/course/draft/4231882/?referralCode=43D156151FDE49E3186D) solamente disponible en Udemy.
+Materiales del curso de [Métodos Numéricos con Python - Parte 3 Problemas no lineales, EDOs y EDPs](https://cursos.frogamesformacion.com/courses/numerico-3?coupon=github) solamente disponible en Frogames.
 
 Puedes consultar todo el material complementario del curso en nuestro [Github.io](https://joanby.github.io/curso-numerico-3/).
 
